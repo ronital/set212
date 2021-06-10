@@ -2,6 +2,10 @@ package com.example.set21;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -21,8 +25,12 @@ import java.util.Locale;
 
 public class Game extends AppCompatActivity {
 
+    private Context context;
+    private PlayerOpenHelper poh;
+    private long id;
+
     //clock
-    private static final long START_TIME_IN_MILLIS = 60000;
+    private static final long START_TIME_IN_MILLIS = 600000;
     private TextView mTextViewCountDown;
     private Button mButtonReset;
     private CountDownTimer mCountDownTimer;
@@ -35,10 +43,16 @@ public class Game extends AppCompatActivity {
     //cards
     Cardboard c;
 
+    //dialog
+    private Dialog saveDialog;
+    private Button btnYes,btnNo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        poh=new PlayerOpenHelper(this);
+        context = this;
 
         //clock
         mTextViewCountDown = findViewById(R.id.text_view_countdown);
@@ -94,6 +108,58 @@ public class Game extends AppCompatActivity {
             @Override
             public void onFinish() {
                 mTimerRunning = false;
+
+                /*saveDialog = new Dialog(context);
+                saveDialog.setTitle("end of the game");
+                saveDialog.setContentView(R.layout.dialog_layout);
+                btnYes = (Button)saveDialog.findViewById(R.id.btnYes);
+                btnNo = (Button)saveDialog.findViewById(R.id.btnNo);
+
+                btnYes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d("Game", "login selected");
+                        Intent intent=new Intent(context, Login.class);
+                        //intent.putExtra("points",.getText().toString());
+                        startActivity(intent);}
+                    });
+                btnNo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.d("Game", "home selected");
+                            Intent intent=new Intent(context, MainActivity.class);
+                            startActivity(intent);}
+                        });
+                saveDialog.show();*/
+
+
+                AlertDialog alertDialog = new AlertDialog.Builder(context)
+                        //set icon
+                        //.setIcon(android.R.drawable.ic_dialog_alert)
+                        //set title
+                        .setTitle("end of the game")
+                        //set message
+                        .setMessage("save results?")
+                        //set positive button
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Log.d("Game", "login selected");
+                                Intent intent=new Intent(context, Login.class);
+                                intent.putExtra("points",c.getPoints());
+                                startActivity(intent);
+                            }
+                        })
+                        //set negative button
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Log.d("Game", "home selected");
+                                Intent intent=new Intent(context, MainActivity.class);
+                                startActivity(intent);
+                            }
+                        })
+                        .show();
             }
         }.start();
         mTimerRunning = true;

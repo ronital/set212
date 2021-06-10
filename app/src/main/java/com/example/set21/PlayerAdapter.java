@@ -29,11 +29,9 @@ public class PlayerAdapter extends ArrayAdapter<Player> {
         LayoutInflater layoutInflater = ((Activity)context).getLayoutInflater();
         View view = layoutInflater.inflate(R.layout.custom_row, parent, false);
 
-        TextView tvPlace =(TextView) view.findViewById(R.id.tvPlace);
         TextView tvName =(TextView) view.findViewById(R.id.tvName);
         TextView tvSets =(TextView) view.findViewById(R.id.tvSets);
         Player temp = objects.get(position);
-        tvPlace.setText(String.valueOf(temp.getPlace()));
         tvName.setText(temp.getName());
         tvSets.setText(String.valueOf(temp.getSets()));
 

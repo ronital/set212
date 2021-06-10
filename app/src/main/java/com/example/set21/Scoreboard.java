@@ -55,11 +55,11 @@ public class Scoreboard extends AppCompatActivity {
     public void createPlayers()
     {
         poh.open();
-        Player p1 = new Player(0,"oren",0 ,-1);
+        Player p1 = new Player(0,"oren",0);
         p1 = poh.createPlayer(p1);
         listOfPlayer.add(p1);
 
-        Player p2 = new Player(0,"dan",0 , -1);
+        Player p2 = new Player(0,"dan",0);
         p2 = poh.createPlayer(p2);
         listOfPlayer.add(p2);
         poh.close();

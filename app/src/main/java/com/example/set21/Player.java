@@ -7,14 +7,12 @@ public class Player
     private long playerId;
     private String name;
     private int sets;
-    private int place;
 
-    public Player(long playerId, String name, int sets, int place) {
+    public Player(long playerId, String name, int sets) {
         super();
         this.playerId = playerId;
         this.name = name;
         this.sets = sets;
-        this.place = place;
     }
 
     public long getPlayerId() {
@@ -36,12 +34,5 @@ public class Player
     }
     public void setSets(Time time) {
         this.sets = sets;
-    }
-
-    public int getPlace() {
-        return place;
-    }
-    public void setPlace(int place) {
-        this.place = place;
     }
 }

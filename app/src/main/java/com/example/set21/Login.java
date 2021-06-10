@@ -1,5 +1,6 @@
 package com.example.set21;
 
+import android.content.Context;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,11 +17,13 @@ public class Login extends AppCompatActivity {
     Button btnsave;
     PlayerOpenHelper cds;
     long id;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        context = this;
 
         cds=new PlayerOpenHelper(this);
         init();
@@ -28,6 +31,9 @@ public class Login extends AppCompatActivity {
 
     public void init()
     {
+        Intent recIntent = getIntent();
+        final int points = recIntent.getExtras().getInt("points");
+
         etname =(EditText) findViewById(R.id.insertName);
         btnsave=(Button) findViewById(R.id.insertBtnSave);
         tvId=(TextView) findViewById(R.id.inserttvId);
@@ -38,13 +44,16 @@ public class Login extends AppCompatActivity {
                 // TODO Auto-generated method stub
 
                 String name = etname.getText().toString();
-                Player p = new Player(0, name, 0, -1);
+                Player p = new Player(0, name, points);
                 cds.open();
                 p = cds.createPlayer(p);
                 cds.close();
                 Intent i = new Intent();
                 setResult(RESULT_OK, i);
                 finish();
+
+                Intent sendIntent=new Intent(context, Scoreboard.class);
+                startActivity(sendIntent);
             }
         });
 

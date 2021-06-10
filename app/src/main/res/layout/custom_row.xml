@@ -4,13 +4,6 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/tvPlace"
-        android:layout_width="102dp"
-        android:layout_height="wrap_content"
-        android:text="place"
-        android:textSize="30sp" />
-
-    <TextView
         android:id="@+id/tvName"
         android:layout_width="102dp"
         android:layout_height="wrap_content"

@@ -18,15 +18,14 @@ public class PlayerOpenHelper extends SQLiteOpenHelper {
 
     public static final String COLUMN_ID = "playerId";
     public static final String COLUMN_NAME = "name";
-    public static final String COLUMN_PLACE = "place";
     public static final String COLUMN_SETS = "sets";
 
     private static final String CREATE_TABLE_CUSTOMER = "CREATE TABLE IF NOT EXISTS " +
-            TABLE_PLAYER + "(" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_NAME + " VARCHAR," + COLUMN_PLACE + " INTEGER,"
+            TABLE_PLAYER + "(" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_NAME + " VARCHAR,"
             + COLUMN_SETS + " INTEGER" + ");";
 
 
-    String[] allColumns = {PlayerOpenHelper.COLUMN_ID, PlayerOpenHelper.COLUMN_NAME, PlayerOpenHelper.COLUMN_PLACE,
+    String[] allColumns = {PlayerOpenHelper.COLUMN_ID, PlayerOpenHelper.COLUMN_NAME,
             PlayerOpenHelper.COLUMN_SETS};
 
     SQLiteDatabase database;
@@ -61,7 +60,6 @@ public class PlayerOpenHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(PlayerOpenHelper.COLUMN_NAME, p.getName());
         values.put(PlayerOpenHelper.COLUMN_SETS, p.getSets());
-        values.put(PlayerOpenHelper.COLUMN_PLACE, p.getPlace());
 
         long insertId=database.insert(PlayerOpenHelper.TABLE_PLAYER, null, values);
         Log.i("data", "Player " + insertId + " insert to database");
@@ -81,8 +79,7 @@ public class PlayerOpenHelper extends SQLiteOpenHelper {
                 long id = cursor.getLong(cursor.getColumnIndex(PlayerOpenHelper.COLUMN_ID));
                 String name =cursor.getString(cursor.getColumnIndex(PlayerOpenHelper.COLUMN_NAME));
                 int sets = cursor.getInt(cursor.getColumnIndex(PlayerOpenHelper.COLUMN_SETS));
-                int place = cursor.getInt(cursor.getColumnIndex(PlayerOpenHelper.COLUMN_PLACE));
-                Player p = new Player(id, name, sets, place);
+                Player p = new Player(id, name, sets);
                 l.add(p);
             }
         }
@@ -107,8 +104,7 @@ public class PlayerOpenHelper extends SQLiteOpenHelper {
                 long id = cursor.getLong(cursor.getColumnIndex(PlayerOpenHelper.COLUMN_ID));
                 String name =cursor.getString(cursor.getColumnIndex(PlayerOpenHelper.COLUMN_NAME));
                 int sets = cursor.getInt(cursor.getColumnIndex(PlayerOpenHelper.COLUMN_SETS));
-                int place = cursor.getInt(cursor.getColumnIndex(PlayerOpenHelper.COLUMN_PLACE));
-                Player p =new Player(id,name,sets,place);
+                Player p =new Player(id,name,sets);
                 l.add(p);
 
             }
@@ -132,8 +128,8 @@ public class PlayerOpenHelper extends SQLiteOpenHelper {
         values.put(PlayerOpenHelper.COLUMN_ID, c.getPlayerId());
         values.put(PlayerOpenHelper.COLUMN_NAME, c.getName());
         values.put(PlayerOpenHelper.COLUMN_SETS, c.getSets());
-        values.put(PlayerOpenHelper.COLUMN_PLACE, c.getPlace());
 
         return database.update(PlayerOpenHelper.TABLE_PLAYER, values, PlayerOpenHelper.COLUMN_ID + "=" + c.getPlayerId(), null);
     }
+
 }
