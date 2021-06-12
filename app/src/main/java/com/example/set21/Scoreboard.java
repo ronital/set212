@@ -54,7 +54,7 @@ public class Scoreboard extends AppCompatActivity {
     }
     public void createPlayers()
     {
-        poh.open();
+        /*poh.open();
         Player p1 = new Player(0,"oren",0);
         p1 = poh.createPlayer(p1);
         listOfPlayer.add(p1);
@@ -62,7 +62,7 @@ public class Scoreboard extends AppCompatActivity {
         Player p2 = new Player(0,"dan",0);
         p2 = poh.createPlayer(p2);
         listOfPlayer.add(p2);
-        poh.close();
+        poh.close();*/
     }
 
     //Menu

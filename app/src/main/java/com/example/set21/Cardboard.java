@@ -17,6 +17,7 @@ import static android.view.View.generateViewId;
 
 public class Cardboard implements View.OnClickListener {
 
+    private ArrayList<Card> showedCards;
     private ArrayList<Integer> clickedIds;
     private ArrayList<Card> cards;
     private ArrayList<Card> clickedCards;
@@ -50,10 +51,23 @@ public class Cardboard implements View.OnClickListener {
                 Toast.makeText(context, "well done", Toast.LENGTH_SHORT).show();
                 points++;
 
+                for (int i = 0; i < showedCards.size(); i++) {
+                    for (int j = 0; j < clickedCards.size(); j++) {
+                        if (showedCards.get(i).isEqual(clickedCards.get(j)))
+                            showedCards.get(i).setNumber(99);
+                    }
+                }
+                for (int i = 0; i < showedCards.size(); i++)
+                {
+                    if (showedCards.get(i).getNumber() == 99)
+                        showedCards.remove(showedCards.get(i));
+                }
+
                 for (int i = 0; i < 3; i++) {
                     int imageKey = context.getResources().getIdentifier(cards.get(0).getName(), "drawable", context.getPackageName());
                     clickedButtons.get(i).setImageResource(imageKey);
                     idCards.put(clickedIds.get(i), cards.get(0).getName());
+                    showedCards.add(cards.get(0));
                     cards.remove(0);
                 }
 
@@ -79,7 +93,6 @@ public class Cardboard implements View.OnClickListener {
             for(View bt : clickedButtons)
                 bt.setEnabled(true);
 
-
             clickedCards.clear();
             clickedButtons.clear();
             clickedIds.clear();
@@ -92,7 +105,7 @@ public class Cardboard implements View.OnClickListener {
         Collections.shuffle(cards);
 
         idCards = new HashMap<Integer, String>();
-
+        showedCards = new ArrayList<>();
         clickedCards = new ArrayList<>();
         clickedButtons = new ArrayList<>();
         clickedIds = new ArrayList<>();
@@ -112,6 +125,7 @@ public class Cardboard implements View.OnClickListener {
                 int id = generateViewId();
                 btn.setId(id);
                 idCards.put(id, cards.get(0).getName());
+                showedCards.add(cards.get(0));
 
                 int imageKey = context.getResources().getIdentifier(cards.get(0).getName(), "drawable", context.getPackageName());
                 btn.setImageResource(imageKey);
@@ -122,6 +136,25 @@ public class Cardboard implements View.OnClickListener {
 
             table.addView(row);
         }
+    }
+
+    public boolean availableSet()
+    {
+        boolean availableSet = false;
+
+        for (int i = 0; i < showedCards.size()-2; i++) {
+            for (int j = i+1; j < showedCards.size()-1; j++) {
+                for (int k = j+1; k < showedCards.size(); k++) {
+                    if (showedCards.get(i).isSet(showedCards.get(j), showedCards.get(k)))
+                    {
+                        availableSet = true;
+                        return availableSet;
+                    }
+                }
+            }
+        }
+
+        return availableSet;
     }
 
     public int getPoints()

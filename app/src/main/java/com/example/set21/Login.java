@@ -10,6 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class Login extends AppCompatActivity {
 
     EditText etname;
@@ -43,8 +47,10 @@ public class Login extends AppCompatActivity {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
 
+                String date = new SimpleDateFormat("dd/MM/yyyy 'at' HH:mm",  java.util.Locale.getDefault()).format(Calendar.getInstance().getTime());
+
                 String name = etname.getText().toString();
-                Player p = new Player(0, name, points);
+                Player p = new Player(0, name, points, date);
                 cds.open();
                 p = cds.createPlayer(p);
                 cds.close();

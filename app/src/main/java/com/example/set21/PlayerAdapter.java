@@ -1,3 +1,4 @@
+
 package com.example.set21;
 
 import android.app.Activity;
@@ -31,9 +32,12 @@ public class PlayerAdapter extends ArrayAdapter<Player> {
 
         TextView tvName =(TextView) view.findViewById(R.id.tvName);
         TextView tvSets =(TextView) view.findViewById(R.id.tvSets);
+        TextView tvDate =(TextView) view.findViewById(R.id.tvDate);
+
         Player temp = objects.get(position);
         tvName.setText(temp.getName());
         tvSets.setText(String.valueOf(temp.getSets()));
+        tvDate.setText(temp.getDate());
 
         return view;
     }

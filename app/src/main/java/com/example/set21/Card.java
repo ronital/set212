@@ -141,4 +141,11 @@ public class Card {
         return true;
     }
 
+    public boolean isEqual(Card c)
+    {
+        if (this.shape.equals(c.shape) && this.color.equals(c.color) && this.filling.equals(c.filling) && this.number == c.number)
+            return true;
+        return false;
+    }
+
 }

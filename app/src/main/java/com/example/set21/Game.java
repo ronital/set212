@@ -16,6 +16,8 @@ import android.os.SystemClock;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Chronometer;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,9 +32,8 @@ public class Game extends AppCompatActivity {
     private long id;
 
     //clock
-    private static final long START_TIME_IN_MILLIS = 600000;
+    private static final long START_TIME_IN_MILLIS = 6000;
     private TextView mTextViewCountDown;
-    private Button mButtonReset;
     private CountDownTimer mCountDownTimer;
     private boolean mTimerRunning;
     private long mTimeLeftInMillis = START_TIME_IN_MILLIS;
@@ -41,11 +42,9 @@ public class Game extends AppCompatActivity {
     private MediaPlayer mediaPlayer;
 
     //cards
-    Cardboard c;
-
-    //dialog
-    private Dialog saveDialog;
-    private Button btnYes,btnNo;
+    private Cardboard c;
+    private TextView tvPoints;
+    private Button btHelp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,37 +55,25 @@ public class Game extends AppCompatActivity {
 
         //clock
         mTextViewCountDown = findViewById(R.id.text_view_countdown);
-        mButtonReset = findViewById(R.id.button_reset);
         startTimer();
-        mButtonReset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                resetTimer();
-            }
-        });
         updateCountDownText();
 
         //music
-        mediaPlayer = MediaPlayer.create(this, R.raw.sound);
-        Button playButton = (Button) findViewById(R.id.start);
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mediaPlayer.start();
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        Toast.makeText(Game.this, "The Song is Over", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
-
-        Button pauseButton = (Button) findViewById(R.id.stop);
-        pauseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mediaPlayer.pause();
+        mediaPlayer = MediaPlayer.create(this, R.raw.amsound);
+        Switch musicSwitch = (Switch) findViewById(R.id.switch1);
+        musicSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mediaPlayer.start();
+                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            Toast.makeText(Game.this, "The Song is Over", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    mediaPlayer.pause();
+                }
             }
         });
 
@@ -94,8 +81,32 @@ public class Game extends AppCompatActivity {
         TableLayout tableLayout = (TableLayout) findViewById(R.id.table_layout_game);
         c = new Cardboard(tableLayout, this);
         //setContentView(c);
+        tvPoints = (TextView)findViewById(R.id.tvPoints);
+        btHelp = findViewById(R.id.btHelp);
+        btHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (c.availableSet())
+                    Toast.makeText(Game.this, "There is a set", Toast.LENGTH_LONG).show();
+                else
+                    Toast.makeText(Game.this, "No set", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
+    //music
+    private void releaseMediaPlayer() {
+        try {
+            if (mediaPlayer != null) {
+                if (mediaPlayer.isPlaying())
+                    mediaPlayer.stop();
+                mediaPlayer.release();
+                mediaPlayer = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     //clock
     private void startTimer() {
@@ -104,34 +115,12 @@ public class Game extends AppCompatActivity {
             public void onTick(long millisUntilFinished) {
                 mTimeLeftInMillis = millisUntilFinished;
                 updateCountDownText();
+
+                tvPoints.setText("sets: " + String.valueOf(c.getPoints()));
             }
             @Override
             public void onFinish() {
                 mTimerRunning = false;
-
-                /*saveDialog = new Dialog(context);
-                saveDialog.setTitle("end of the game");
-                saveDialog.setContentView(R.layout.dialog_layout);
-                btnYes = (Button)saveDialog.findViewById(R.id.btnYes);
-                btnNo = (Button)saveDialog.findViewById(R.id.btnNo);
-
-                btnYes.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.d("Game", "login selected");
-                        Intent intent=new Intent(context, Login.class);
-                        //intent.putExtra("points",.getText().toString());
-                        startActivity(intent);}
-                    });
-                btnNo.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Log.d("Game", "home selected");
-                            Intent intent=new Intent(context, MainActivity.class);
-                            startActivity(intent);}
-                        });
-                saveDialog.show();*/
-
 
                 AlertDialog alertDialog = new AlertDialog.Builder(context)
                         //set icon
@@ -160,16 +149,13 @@ public class Game extends AppCompatActivity {
                             }
                         })
                         .show();
+
+                releaseMediaPlayer();
             }
         }.start();
         mTimerRunning = true;
     }
 
-    private void resetTimer() {
-        mTimeLeftInMillis = START_TIME_IN_MILLIS;
-        updateCountDownText();
-        mCountDownTimer.start();
-    }
     private void updateCountDownText() {
         int minutes = (int) (mTimeLeftInMillis / 1000) / 60;
         int seconds = (int) (mTimeLeftInMillis / 1000) % 60;
@@ -194,16 +180,19 @@ public class Game extends AppCompatActivity {
             return true;
         }
         if (id == R.id.action_home) {
+            releaseMediaPlayer();
             Log.d("MainActivity", "home selected");
             Intent intent=new Intent(this,MainActivity.class);
             startActivity(intent);
         }
         if (id == R.id.action_game) {
+            releaseMediaPlayer();
             Log.d("MainActivity", "game selected");
             Intent intent=new Intent(this,Game.class);
             startActivity(intent);
         }
         else if (id == R.id.action_scoreboard) {
+            releaseMediaPlayer();
             Log.d("MainActivity", "scoreboard selected");
             Intent intent=new Intent(this,Scoreboard.class);
             startActivity(intent);
