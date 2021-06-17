@@ -1,11 +1,16 @@
 package com.example.set21;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,11 +26,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btnYoutube;
     TextView tv;
     BroadCastBattery broadCastBattery;
+    Context context;
+
+    Dialog d;
+    Button btnEasy;
+    Button btnMedium;
+    Button btnHard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = this;
 
         btnYoutube=(Button)findViewById(R.id.btnYoutube);
         btnYoutube.setOnClickListener(this);
@@ -68,11 +80,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_login) {
+        /*if (id == R.id.action_login) {
             Log.d("MainActivity", "login selected");
             Intent intent=new Intent(this,Login.class);
             startActivity(intent);
-        }
+        }*/
         if (id == R.id.action_home) {
             Log.d("MainActivity", "home selected");
             Intent intent=new Intent(this,MainActivity.class);
@@ -80,8 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if (id == R.id.action_game) {
             Log.d("MainActivity", "game selected");
-            Intent intent=new Intent(this,Game.class);
-            startActivity(intent);
+            createGameDialog();
         }
         else if (id == R.id.action_scoreboard) {
             Log.d("MainActivity", "scoreboard selected");
@@ -95,5 +106,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         Intent intent=new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=lqtcKFyg0Bc"));
         startActivity(intent);
+    }
+
+    public void createGameDialog()
+    {
+        d= new Dialog(this);
+        d.setContentView(R.layout.dialog_layout);
+        d.setTitle("start game");
+        d.setCancelable(false);
+        btnEasy = (Button)d.findViewById(R.id.easy);
+        btnMedium = (Button)d.findViewById(R.id.medium);
+        btnHard = (Button)d.findViewById(R.id.hard);
+        btnEasy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(context,Game.class);
+                intent.putExtra("level","easy");
+                startActivity(intent);
+            }
+        });
+        btnMedium.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(context,Game.class);
+                intent.putExtra("level","medium");
+                startActivity(intent);
+            }
+        });
+        btnHard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(context,Game.class);
+                intent.putExtra("level","hard");
+                startActivity(intent);
+            }
+        });
+        d.show();
     }
 }

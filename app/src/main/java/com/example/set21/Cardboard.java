@@ -26,11 +26,13 @@ public class Cardboard implements View.OnClickListener {
     private int points;
     private Context context;
 
-    public Cardboard(TableLayout table, Context context) {
+    public Cardboard(TableLayout table, Context context, int level) {
         //LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         //this.setOrientation(VERTICAL);
         this.context = context;
-        loadCardboard(table, context);
+
+
+        loadCardboard(table, context, level);
 
 
     }
@@ -99,7 +101,7 @@ public class Cardboard implements View.OnClickListener {
         }
     }
 
-    private void loadCardboard(TableLayout table, Context context) {
+    private void loadCardboard(TableLayout table, Context context, int level) {
         cards = new ArrayList<>();
         initCards(cards);
         Collections.shuffle(cards);
@@ -110,7 +112,7 @@ public class Cardboard implements View.OnClickListener {
         clickedButtons = new ArrayList<>();
         clickedIds = new ArrayList<>();
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < level; i++) {
 
             TableRow row = new TableRow(context);
             TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);

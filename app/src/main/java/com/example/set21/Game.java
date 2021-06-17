@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -32,7 +33,7 @@ public class Game extends AppCompatActivity {
     private long id;
 
     //clock
-    private static final long START_TIME_IN_MILLIS = 6000;
+    private static final long START_TIME_IN_MILLIS = 60000;
     private TextView mTextViewCountDown;
     private CountDownTimer mCountDownTimer;
     private boolean mTimerRunning;
@@ -45,6 +46,14 @@ public class Game extends AppCompatActivity {
     private Cardboard c;
     private TextView tvPoints;
     private Button btHelp;
+    private String level;
+
+    //dialog
+    private Dialog d;
+    private Button btnEasy;
+    private Button btnMedium;
+    private Button btnHard;
+    private int levelCards;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +62,30 @@ public class Game extends AppCompatActivity {
         poh=new PlayerOpenHelper(this);
         context = this;
 
+        Intent recIntent = getIntent();
+        level = recIntent.getExtras().getString("level");
+        if (level.equals("easy")){
+            getWindow().getDecorView().setBackgroundColor(Color.rgb(0,255,0));
+            mediaPlayer = MediaPlayer.create(this, R.raw.amsound);
+            levelCards = 5;
+        }
+        else if (level.equals("medium")){
+            getWindow().getDecorView().setBackgroundColor(Color.rgb(255,0,0));
+            mediaPlayer = MediaPlayer.create(this, R.raw.onedsound);
+            levelCards = 4;
+        }
+        else if (level.equals("hard")){
+            getWindow().getDecorView().setBackgroundColor(Color.rgb(204,51,255));
+            mediaPlayer = MediaPlayer.create(this, R.raw.dpsound);
+            levelCards = 3;
+        }
+
         //clock
         mTextViewCountDown = findViewById(R.id.text_view_countdown);
         startTimer();
         updateCountDownText();
 
         //music
-        mediaPlayer = MediaPlayer.create(this, R.raw.amsound);
         Switch musicSwitch = (Switch) findViewById(R.id.switch1);
         musicSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -79,7 +105,7 @@ public class Game extends AppCompatActivity {
 
         //cards
         TableLayout tableLayout = (TableLayout) findViewById(R.id.table_layout_game);
-        c = new Cardboard(tableLayout, this);
+        c = new Cardboard(tableLayout, this, levelCards);
         //setContentView(c);
         tvPoints = (TextView)findViewById(R.id.tvPoints);
         btHelp = findViewById(R.id.btHelp);
@@ -175,10 +201,10 @@ public class Game extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_login) {
+        /*if (id == R.id.action_login) {
             Log.d("MainActivity", "login selected");
             return true;
-        }
+        }*/
         if (id == R.id.action_home) {
             releaseMediaPlayer();
             Log.d("MainActivity", "home selected");
@@ -188,8 +214,7 @@ public class Game extends AppCompatActivity {
         if (id == R.id.action_game) {
             releaseMediaPlayer();
             Log.d("MainActivity", "game selected");
-            Intent intent=new Intent(this,Game.class);
-            startActivity(intent);
+            createGameDialog();
         }
         else if (id == R.id.action_scoreboard) {
             releaseMediaPlayer();
@@ -198,5 +223,41 @@ public class Game extends AppCompatActivity {
             startActivity(intent);
         }
         return true;
+    }
+
+    public void createGameDialog()
+    {
+        d= new Dialog(this);
+        d.setContentView(R.layout.dialog_layout);
+        d.setTitle("start game");
+        d.setCancelable(false);
+        btnEasy = (Button)d.findViewById(R.id.easy);
+        btnMedium = (Button)d.findViewById(R.id.medium);
+        btnHard = (Button)d.findViewById(R.id.hard);
+        btnEasy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(context,Game.class);
+                intent.putExtra("level","easy");
+                startActivity(intent);
+            }
+        });
+        btnMedium.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(context,Game.class);
+                intent.putExtra("level","medium");
+                startActivity(intent);
+            }
+        });
+        btnHard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(context,Game.class);
+                intent.putExtra("level","hard");
+                startActivity(intent);
+            }
+        });
+        d.show();
     }
 }

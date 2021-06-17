@@ -2,11 +2,15 @@ package com.example.set21;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -18,10 +22,18 @@ public class Scoreboard extends AppCompatActivity {
     ListView lv;
     PlayerAdapter PlayerAdapter;
 
+    //dialog
+    private Dialog d;
+    private Button btnEasy;
+    private Button btnMedium;
+    private Button btnHard;
+    private Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scoreboard);
+        context = this;
 
         lv=(ListView)findViewById(R.id.lv);
 
@@ -76,10 +88,10 @@ public class Scoreboard extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_login) {
+        /*if (id == R.id.action_login) {
             Log.d("MainActivity", "login selected");
             return true;
-        }
+        }*/
         if (id == R.id.action_home) {
             Log.d("MainActivity", "home selected");
             Intent intent=new Intent(this,MainActivity.class);
@@ -87,8 +99,7 @@ public class Scoreboard extends AppCompatActivity {
         }
         if (id == R.id.action_game) {
             Log.d("MainActivity", "game selected");
-            Intent intent=new Intent(this,Game.class);
-            startActivity(intent);
+            createGameDialog();
         }
         else if (id == R.id.action_scoreboard) {
             Log.d("MainActivity", "scoreboard selected");
@@ -96,5 +107,41 @@ public class Scoreboard extends AppCompatActivity {
             startActivity(intent);
         }
         return true;
+    }
+
+    public void createGameDialog()
+    {
+        d= new Dialog(this);
+        d.setContentView(R.layout.dialog_layout);
+        d.setTitle("start game");
+        d.setCancelable(false);
+        btnEasy = (Button)d.findViewById(R.id.easy);
+        btnMedium = (Button)d.findViewById(R.id.medium);
+        btnHard = (Button)d.findViewById(R.id.hard);
+        btnEasy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(context,Game.class);
+                intent.putExtra("level","easy");
+                startActivity(intent);
+            }
+        });
+        btnMedium.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(context,Game.class);
+                intent.putExtra("level","medium");
+                startActivity(intent);
+            }
+        });
+        btnHard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(context,Game.class);
+                intent.putExtra("level","hard");
+                startActivity(intent);
+            }
+        });
+        d.show();
     }
 }
